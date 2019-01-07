@@ -15,7 +15,7 @@ commodity.post('/commodityList', (req, res) => {
 });
 
 
-//新增商品
+//新增构件
 commodity.post('/addCommodity', (req, res) => {
     fs.readFile('../data/commodityData.json', (err, data) => {
         if (err) {
@@ -31,7 +31,7 @@ commodity.post('/addCommodity', (req, res) => {
             data.count = count;
             data.data = dataList;
             let str = JSON.stringify(data);
-            writeFileFn(str, res);
+            writeFileFn2(str, res);
         });
     })
 });
@@ -50,7 +50,7 @@ commodity.post('/deleteCommodity', (req, res) => {
             dataList = dataList.filter(item => item.id !== request.id);
             data.data = dataList;
             let str = JSON.stringify(data);
-            writeFileFn(str, res);
+            writeFileFn2(str, res);
         });
     })
 });
@@ -73,7 +73,7 @@ commodity.post('/updateCommodity', (req, res) => {
             });
             data.data = dataList;
             let str = JSON.stringify(data);
-            writeFileFn(str, res);
+            writeFileFn2(str, res);
         });
     })
 });
@@ -99,7 +99,7 @@ commodity.post('/checkCommodityName', (req, res) => {
 });
 
 
-writeFileFn = (str, res) => {
+writeFileFn2 = (str, res) => {
     fs.writeFile('../data/commodityData.json', str, function (err) {
         if (err) {
             console.error(err);
