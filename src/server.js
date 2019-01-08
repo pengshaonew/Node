@@ -1,4 +1,3 @@
-/*
 let server = require('express');
 let fs = require('fs');
 const path = require('path');
@@ -29,12 +28,12 @@ app.use((req, res, next) => {
     next();
 });
 
-let commodity= require('../components/commodity');
+let commodity= require('./components/commodity');
 app.use('/commodity',commodity);
 
 //查询分类名称 项目名称
 app.post('/class/classList', (req, res) => {
-    fs.readFile('../data/classificationData.json', (err, data) => {
+    fs.readFile('./data/classificationData.json', (err, data) => {
         if (err) {
             return console.error(err);
         }
@@ -46,19 +45,20 @@ app.post('/class/classList', (req, res) => {
 //上传商品图片
 app.post('/upload/commodityImg', (req, res) => {
     var form = new formidable.IncomingForm();
-    var targetFile = path.join(__dirname,'../upload');
+    var targetFile = path.join(__dirname,'./upload');
     form.uploadDir = targetFile;
     form.parse(req,function(err,fields,files){
         if(err) throw err;
         var oldpath = files.file.path;
-        var newpath = path.join(path.dirname(oldpath),new Date().getTime()+/(\.\w+)$/.exec(files.file.name)[1]);
+        let filename=new Date().getTime()+/(\.\w+)$/.exec(files.file.name)[1];
+        var newpath = path.join(path.dirname(oldpath),filename);
         fs.rename(oldpath,newpath,(err)=>{
             if(err) throw err;
             res.writeHead(200,{"Content-Type":"text/html;charset=UTF8"});
             res.send({
                 flag:1,
                 message:'图片上传成功！',
-                url:newpath
+                url:`http://localhost:3005/upload/${filename}`
             });
         })
     });
@@ -66,7 +66,7 @@ app.post('/upload/commodityImg', (req, res) => {
 
 
 writeFileClass = (str, res) => {
-    fs.writeFile('../data/classificationData.json', str, function (err) {
+    fs.writeFile('./data/classificationData.json', str, function (err) {
         if (err) {
             console.error(err);
             res.send({
@@ -81,9 +81,10 @@ writeFileClass = (str, res) => {
     })
 };
 
-app.get('/upload/!*', function (req, res) {
-    res.sendFile(__dirname + "/" + req.url);
-    console.log(__dirname + "/" + req.url);
+app.get('/upload/*', function (req, res) {
+    res.writeHead(200, {'Content-Type': 'text/plain;charset=utf-8'});
+    res.sendFile(__dirname + req.url);
+    console.log(__dirname + req.url);
 })
 
 app.all('*', (req, res) => {
@@ -104,4 +105,3 @@ app.listen(3005,()=>{
 
 
 
-*/

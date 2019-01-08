@@ -5,7 +5,7 @@ let commodity = express.Router();
 
 //查询商品
 commodity.post('/commodityList', (req, res) => {
-    fs.readFile('../data/commodityData.json', (err, data) => {
+    fs.readFile('./data/commodityData.json', (err, data) => {
         if (err) {
             return console.error(err);
         }
@@ -17,7 +17,7 @@ commodity.post('/commodityList', (req, res) => {
 
 //新增构件
 commodity.post('/addCommodity', (req, res) => {
-    fs.readFile('../data/commodityData.json', (err, data) => {
+    fs.readFile('./data/commodityData.json', (err, data) => {
         if (err) {
             return console.error(err);
         }
@@ -31,7 +31,7 @@ commodity.post('/addCommodity', (req, res) => {
             data.count = count;
             data.data = dataList;
             let str = JSON.stringify(data);
-            writeFileFn2(str, res);
+            writeFileCommodity1(str, res);
         });
     })
 });
@@ -39,7 +39,7 @@ commodity.post('/addCommodity', (req, res) => {
 
 //删除商品
 commodity.post('/deleteCommodity', (req, res) => {
-    fs.readFile('../data/commodityData.json', (err, data) => {
+    fs.readFile('./data/commodityData.json', (err, data) => {
         if (err) {
             return console.error(err);
         }
@@ -50,14 +50,14 @@ commodity.post('/deleteCommodity', (req, res) => {
             dataList = dataList.filter(item => item.id !== request.id);
             data.data = dataList;
             let str = JSON.stringify(data);
-            writeFileFn2(str, res);
+            writeFileCommodity1(str, res);
         });
     })
 });
 
 //修改商品信息
 commodity.post('/updateCommodity', (req, res) => {
-    fs.readFile('../data/commodityData.json', (err, data) => {
+    fs.readFile('./data/commodityData.json', (err, data) => {
         if (err) {
             return console.error(err);
         }
@@ -73,14 +73,14 @@ commodity.post('/updateCommodity', (req, res) => {
             });
             data.data = dataList;
             let str = JSON.stringify(data);
-            writeFileFn2(str, res);
+            writeFileCommodity1(str, res);
         });
     })
 });
 
 //检测商品名称
 commodity.post('/checkCommodityName', (req, res) => {
-    fs.readFile('../data/commodityData.json', (err, data) => {
+    fs.readFile('./data/commodityData.json', (err, data) => {
         if (err) {
             return console.error(err);
         }
@@ -88,7 +88,7 @@ commodity.post('/checkCommodityName', (req, res) => {
             let request = JSON.parse(parms.toString());
             data = JSON.parse(data.toString());
             let dataList = data.data;
-            let flag = !dataList.some(item =>item.id!==request.id && item.name===request.name);
+            let flag = !dataList.some(item =>item.id!==request.id && item.parentId===request.parentId && item.name===request.name);
             data.data = dataList;
             res.send({
                 "flag": 1,
@@ -99,8 +99,8 @@ commodity.post('/checkCommodityName', (req, res) => {
 });
 
 
-writeFileFn2 = (str, res) => {
-    fs.writeFile('../data/commodityData.json', str, function (err) {
+writeFileCommodity1 = (str, res) => {
+    fs.writeFile('./data/commodityData.json', str, function (err) {
         if (err) {
             console.error(err);
         }
