@@ -81,11 +81,11 @@ writeFileClass = (str, res) => {
     })
 };
 
-app.get('/upload/*', function (req, res) {
-    res.writeHead(200, {'Content-Type': 'text/plain;charset=utf-8'});
+app.get('/upload/*', (req,res)=>{
+    res.setHeader('Content-Type', 'image/*');
     res.sendFile(__dirname + req.url);
     console.log(__dirname + req.url);
-})
+});
 
 app.all('*', (req, res) => {
     res.setHeader('content-type', 'text/html;charset=utf-8');

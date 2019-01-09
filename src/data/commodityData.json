@@ -1,17 +1,1 @@
-{
-  "count": 7,
-  "data": [
-    {
-      "parentId": "1",
-      "name": "1",
-      "createDate": "2019-1-8",
-      "id": 6
-    },
-    {
-      "parentId": "1",
-      "name": "2",
-      "createDate": "2019-1-8",
-      "id": 7
-    }
-  ]
-}
+{"count":10,"data":[{"parentId":"0","name":"构件3","createDate":"2019-1-9","parentName":"纵梁","imgUrl":"http://localhost:3005/upload/1547045467888.jpg","id":7},{"parentId":"2","name":"构件1","createDate":"2019-1-9","parentName":"分类3","id":8},{"parentId":"0","name":"构件1","createDate":"2019-1-9","parentName":"纵梁","imgUrl":"http://localhost:3005/upload/1547046471741.jpg","id":9},{"parentId":"4","name":"构件1","createDate":"2019-1-9","parentName":"分类5","imgUrl":"http://localhost:3005/upload/1547047055564.jpg","id":10}]}
