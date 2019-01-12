@@ -7,7 +7,7 @@ let commodity = express.Router();
 commodity.post('/mobile/commodityList', (req, res) => {
     req.on('data', function (parms) {
         let request = JSON.parse(parms.toString());
-        fs.readFile('./data/commodityDataRecord.json', (err, data) => {
+        fs.readFile('./src/data/commodityDataRecord.json', (err, data) => {
             if (err) {
                 return console.error(err);
             }
@@ -21,19 +21,35 @@ commodity.post('/mobile/commodityList', (req, res) => {
 
 //查询商品列表
 commodity.post('/commodityList', (req, res) => {
-    fs.readFile('./data/commodityData.json', (err, data) => {
-        if (err) {
-            return console.error(err);
-        }
-        data = JSON.parse(data.toString());
-        res.send(data.data);
-    })
+    req.on('data', function (parms) {
+        let request = JSON.parse(parms.toString());
+        fs.readFile('./src/data/commodityData.json', (err, data) => {
+            if (err) {
+                return console.error(err);
+            }
+            data = JSON.parse(data.toString());
+            let dataList = [...data.data];
+            let total=data.data.length;
+            let {pageNum,pageSize,classId}=request;
+            if(request.classId){
+                dataList=dataList.filter(item=>item.parentId===classId);
+                total=dataList.length;
+            }
+            dataList=dataList.splice(pageSize*((pageNum||1)-1),pageSize);
+            res.send({
+                pageNum,
+                pageSize,
+                total,
+                list:dataList
+            });
+        })
+    });
 });
 
 
 //新增构件
 commodity.post('/addCommodity', (req, res) => {
-    fs.readFile('./data/commodityData.json', (err, data) => {
+    fs.readFile('./src/data/commodityData.json', (err, data) => {
         if (err) {
             return console.error(err);
         }
@@ -56,7 +72,7 @@ commodity.post('/addCommodity', (req, res) => {
 
 //删除商品
 commodity.post('/deleteCommodity', (req, res) => {
-    fs.readFile('./data/commodityData.json', (err, data) => {
+    fs.readFile('./src/data/commodityData.json', (err, data) => {
         if (err) {
             return console.error(err);
         }
@@ -70,7 +86,7 @@ commodity.post('/deleteCommodity', (req, res) => {
             writeFileCommodity1(str, res);
         });
     });
-    fs.readFile('./data/commodityDataRecord.json', (err, data) => {
+    fs.readFile('./src/data/commodityDataRecord.json', (err, data) => {
         if (err) {
             return console.error(err);
         }
@@ -88,7 +104,7 @@ commodity.post('/deleteCommodity', (req, res) => {
 
 //修改商品信息
 commodity.post('/updateCommodity', (req, res) => {
-    fs.readFile('./data/commodityData.json', (err, data) => {
+    fs.readFile('./src/data/commodityData.json', (err, data) => {
         if (err) {
             return console.error(err);
         }
@@ -111,7 +127,7 @@ commodity.post('/updateCommodity', (req, res) => {
 
 //检测商品名称
 commodity.post('/checkCommodityName', (req, res) => {
-    fs.readFile('./data/commodityData.json', (err, data) => {
+    fs.readFile('./src/data/commodityData.json', (err, data) => {
         if (err) {
             return console.error(err);
         }
@@ -131,7 +147,7 @@ commodity.post('/checkCommodityName', (req, res) => {
 
 
 writeFileCommodity1 = (str, res) => {
-    fs.writeFile('./data/commodityData.json', str, function (err) {
+    fs.writeFile('./src/data/commodityData.json', str, function (err) {
         if (err) {
             console.error(err);
         }
@@ -143,7 +159,7 @@ writeFileCommodity1 = (str, res) => {
 };
 
 writeFileCommodity2 = (str) => {
-    fs.writeFile('./data/commodityDataRecord.json', str, function (err) {
+    fs.writeFile('./src/data/commodityDataRecord.json', str, function (err) {
         if (err) {
             console.error(err);
         }
