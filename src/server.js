@@ -55,10 +55,11 @@ app.post('/upload/commodityImg', (req, res) => {
         fs.rename(oldpath,newpath,(err)=>{
             if(err) throw err;
             res.writeHead(200,{"Content-Type":"text/html;charset=UTF8"});
+            //TODO zhaoshaopeng 图片路径
             res.send({
                 flag:1,
                 message:'图片上传成功！',
-                url:`http://localhost:3005/upload/${filename}`
+                url:`http://localhost:${server1.address().port}/upload/${filename}`
             });
         })
     });
@@ -92,8 +93,10 @@ app.all('*', (req, res) => {
     res.send({flag:0,"message": "请求的路径不存在"});
 });
 
-app.listen(3005,()=>{
-    console.log('服务启动');
+var server1 = app.listen(3005,()=>{
+    var host = server1.address().address;
+    var port = server1.address().port;
+    console.log('服务器启动host：' + host + '，port： ' + port);
 });
 
 
