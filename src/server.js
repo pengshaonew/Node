@@ -1,6 +1,6 @@
 let server = require('express');
 let fs = require('fs');
-const path = require('path');
+let path = require('path');
 let status_codes = require('_http_server').STATUS_CODES;
 let app = server();
 const formidable = require('formidable');
@@ -29,11 +29,12 @@ app.use((req, res, next) => {
 });
 
 let commodity = require('./components/commodity');
-app.use('/commodity', commodity);
+app.use('/chinaRailway/commodity', commodity);
 
 //查询分类名称 项目名称
-app.post('/class/classList', (req, res) => {
-    fs.readFile('./src/data/classificationData.json', (err, data) => {
+app.post('/chinaRailway/class/classList', (req, res) => {
+    console.log(__dirname + '/data/classificationData.json');
+    fs.readFile(__dirname+'/data/classificationData.json', (err, data) => {
         if (err) {
             return console.error(err);
         }
@@ -44,10 +45,10 @@ app.post('/class/classList', (req, res) => {
 
 
 //分类 修改
-app.post('/class/updateClass', (req, res) => {
+app.post('/chinaRailway/class/updateClass', (req, res) => {
     req.on('data', function (parms) {
         let request = JSON.parse(parms.toString());
-        fs.readFile('./src/data/classificationData.json', (err, data) => {
+        fs.readFile(__dirname+'/data/classificationData.json', (err, data) => {
             if (err) {
                 return console.error(err);
             }
@@ -66,10 +67,10 @@ app.post('/class/updateClass', (req, res) => {
 });
 
 //分类 删除
-app.post('/class/deleteClass', (req, res) => {
+app.post('/chinaRailway/class/deleteClass', (req, res) => {
     req.on('data', function (parms) {
         let request = JSON.parse(parms.toString());
-        fs.readFile('./src/data/classificationData.json', (err, data) => {
+        fs.readFile(__dirname+'/data/classificationData.json', (err, data) => {
             if (err) {
                 return console.error(err);
             }
@@ -83,7 +84,7 @@ app.post('/class/deleteClass', (req, res) => {
 });
 
 //上传商品图片
-app.post('/upload/commodityImg', (req, res) => {
+app.post('/chinaRailway/upload/commodityImg', (req, res) => {
     var form = new formidable.IncomingForm();
     var targetFile = path.join(__dirname, './upload');
     form.uploadDir = targetFile;
@@ -99,7 +100,7 @@ app.post('/upload/commodityImg', (req, res) => {
             res.send({
                 flag: 1,
                 message: '图片上传成功！',
-                url: `http://localhost:${server1.address().port}/upload/${filename}`
+                url: `http://60.205.186.254/upload/${filename}`
             });
         })
     });
@@ -112,10 +113,10 @@ app.get('/upload/*', (req, res) => {
 });
 
 //用户登录
-app.post('/login', (req, res) => {
+app.post('/chinaRailway/login', (req, res) => {
     req.on('data', function (parms) {
         let request = JSON.parse(parms.toString());
-        fs.readFile('./src/data/userInfo.json', (err, data) => {
+        fs.readFile(__dirname+'/data/userInfo.json', (err, data) => {
             if (err) {
                 return console.error(err);
             }
@@ -134,7 +135,7 @@ app.post('/login', (req, res) => {
 
 // 修改项目名称，新增、删除、修改分类
 writeFileClass = (str, res) => {
-    fs.writeFile('./src/data/classificationData.json', str, function (err) {
+    fs.writeFile(__dirname+'/data/classificationData.json', str, function (err) {
         if (err) {
             console.error(err);
             res.send({
@@ -150,6 +151,7 @@ writeFileClass = (str, res) => {
 };
 
 app.all('*', (req, res) => {
+    console.log(req.originalUrl);
     res.setHeader('content-type', 'text/html;charset=utf-8');
     res.send({flag: 0, "message": "请求的路径不存在"});
 });
@@ -157,7 +159,7 @@ app.all('*', (req, res) => {
 var server1 = app.listen(3005, () => {
     var host = server1.address().address;
     var port = server1.address().port;
-    console.log('服务器启动host：' + host + '，port： ' + port);
+    console.log('服务器启动成功host：' + host + '，port： ' + port);
 });
 
 

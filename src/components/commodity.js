@@ -1,13 +1,16 @@
 let express = require('express');
 let fs = require('fs');
+let path = require('path');
 // 返回一个Router的实例
 let commodity = express.Router();
 
+let commodityDataPath = path.join(__dirname, '../data/commodityData.json');
+let commodityDataRecordPath = path.join(__dirname, '../data/commodityDataRecord.json');
 // 小程序 查询商品列表
 commodity.post('/mobile/commodityList', (req, res) => {
     req.on('data', function (parms) {
         let request = JSON.parse(parms.toString());
-        fs.readFile('./src/data/commodityDataRecord.json', (err, data) => {
+        fs.readFile(commodityDataRecordPath, (err, data) => {
             if (err) {
                 return console.error(err);
             }
@@ -23,7 +26,7 @@ commodity.post('/mobile/commodityList', (req, res) => {
 commodity.post('/commodityList', (req, res) => {
     req.on('data', function (parms) {
         let request = JSON.parse(parms.toString());
-        fs.readFile('./src/data/commodityData.json', (err, data) => {
+        fs.readFile(commodityDataPath, (err, data) => {
             if (err) {
                 return console.error(err);
             }
@@ -49,7 +52,7 @@ commodity.post('/commodityList', (req, res) => {
 
 //新增构件
 commodity.post('/addCommodity', (req, res) => {
-    fs.readFile('./src/data/commodityData.json', (err, data) => {
+    fs.readFile(commodityDataPath, (err, data) => {
         if (err) {
             return console.error(err);
         }
@@ -72,7 +75,7 @@ commodity.post('/addCommodity', (req, res) => {
 
 //删除商品
 commodity.post('/deleteCommodity', (req, res) => {
-    fs.readFile('./src/data/commodityData.json', (err, data) => {
+    fs.readFile('./src/commodityData.json', (err, data) => {
         if (err) {
             return console.error(err);
         }
@@ -104,7 +107,7 @@ commodity.post('/deleteCommodity', (req, res) => {
 
 //修改商品信息
 commodity.post('/updateCommodity', (req, res) => {
-    fs.readFile('./src/data/commodityData.json', (err, data) => {
+    fs.readFile(commodityDataPath, (err, data) => {
         if (err) {
             return console.error(err);
         }
@@ -127,7 +130,7 @@ commodity.post('/updateCommodity', (req, res) => {
 
 //检测商品名称
 commodity.post('/checkCommodityName', (req, res) => {
-    fs.readFile('./src/data/commodityData.json', (err, data) => {
+    fs.readFile(commodityDataPath, (err, data) => {
         if (err) {
             return console.error(err);
         }
@@ -147,7 +150,7 @@ commodity.post('/checkCommodityName', (req, res) => {
 
 
 writeFileCommodity1 = (str, res) => {
-    fs.writeFile('./src/data/commodityData.json', str, function (err) {
+    fs.writeFile(commodityDataPath, str, function (err) {
         if (err) {
             console.error(err);
         }
@@ -159,7 +162,7 @@ writeFileCommodity1 = (str, res) => {
 };
 
 writeFileCommodity2 = (str) => {
-    fs.writeFile('./src/data/commodityDataRecord.json', str, function (err) {
+    fs.writeFile(commodityDataRecordPath, str, function (err) {
         if (err) {
             console.error(err);
         }
