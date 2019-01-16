@@ -121,11 +121,11 @@ app.post('/chinaRailway/login', (req, res) => {
                 return console.error(err);
             }
             data = JSON.parse(data.toString());
-            let flag = data.data.some(item => {
+            let result = data.data.find(item => {
                 return item.account === request.account && item.password === request.password;
             });
             res.send({
-                flag,
+                data:result.id,
                 message: flag ? "登录成功" : "用户名或密码错误"
             })
         })
