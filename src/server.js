@@ -33,7 +33,6 @@ app.use('/chinaRailway/commodity', commodity);
 
 //查询分类名称 项目名称
 app.post('/chinaRailway/class/classList', (req, res) => {
-    console.log(__dirname + '/data/classificationData.json');
     fs.readFile(__dirname+'/data/classificationData.json', (err, data) => {
         if (err) {
             return console.error(err);
@@ -125,8 +124,8 @@ app.post('/chinaRailway/login', (req, res) => {
                 return item.account === request.account && item.password === request.password;
             });
             res.send({
-                data:result.id,
-                message: flag ? "登录成功" : "用户名或密码错误"
+                data:result && result.id,
+                message: result && result.id ? "登录成功" : "用户名或密码错误"
             })
         })
     });
