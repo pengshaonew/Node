@@ -3,6 +3,7 @@ let fs = require('fs');
 let path = require('path');
 let status_codes = require('_http_server').STATUS_CODES;
 let app = server();
+const session = require('express-session');
 const formidable = require('formidable');
 
 // 会把此路径和客户端的请求路径进行匹配   匹配的是前缀  请求路径是以/commodity/开头的
@@ -148,11 +149,20 @@ writeFileClass = (str, res) => {
         });
     })
 };
+app.use(session({
+    secret: 'somesecrettoken',
+    cookie: { maxAge: 1*60*1000 }  // 1分钟
+}));
 
 app.all('*', (req, res) => {
     console.log(req.originalUrl);
     res.setHeader('content-type', 'text/html;charset=utf-8');
-    res.send({flag: 0, "message": "请求的路径不存在"});
+    if (req.session.isVisit) {
+        res.send({flag: 0, "message": "请求的路径不存在0"});
+    } else {
+        req.session.isVisit = true;
+        res.send({flag: 0, "message": "请求的路径不存在"});
+    }
 });
 
 var server1 = app.listen(3005, () => {
