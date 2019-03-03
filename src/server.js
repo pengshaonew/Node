@@ -6,11 +6,15 @@ let app = server();
 const session = require('express-session');
 const formidable = require('formidable');
 
-// 会把此路径和客户端的请求路径进行匹配   匹配的是前缀  请求路径是以/commodity/开头的
 app.use((req, res, next) => {
     res.setHeader('content-type', 'text/html;charset=utf-8;');
     next();
 });
+
+app.use(session({
+    secret: 'somesecrettoken',
+    cookie: {maxAge: 30 * 60 * 1000}  // 1分钟
+}));
 
 app.use((req, res, next) => {
     res.send = params => {
@@ -29,12 +33,13 @@ app.use((req, res, next) => {
     next();
 });
 
+// 会把此路径和客户端的请求路径进行匹配   匹配的是前缀  请求路径是以/chinaRailway/commodity/开头的
 let commodity = require('./components/commodity');
 app.use('/chinaRailway/commodity', commodity);
 
 //查询分类名称 项目名称
 app.post('/chinaRailway/class/classList', (req, res) => {
-    fs.readFile(__dirname+'/data/classificationData.json', (err, data) => {
+    fs.readFile(__dirname + '/data/classificationData.json', (err, data) => {
         if (err) {
             return console.error(err);
         }
@@ -43,12 +48,11 @@ app.post('/chinaRailway/class/classList', (req, res) => {
     })
 });
 
-
 //分类 修改
 app.post('/chinaRailway/class/updateClass', (req, res) => {
     req.on('data', function (parms) {
         let request = JSON.parse(parms.toString());
-        fs.readFile(__dirname+'/data/classificationData.json', (err, data) => {
+        fs.readFile(__dirname + '/data/classificationData.json', (err, data) => {
             if (err) {
                 return console.error(err);
             }
@@ -70,7 +74,7 @@ app.post('/chinaRailway/class/updateClass', (req, res) => {
 app.post('/chinaRailway/class/deleteClass', (req, res) => {
     req.on('data', function (parms) {
         let request = JSON.parse(parms.toString());
-        fs.readFile(__dirname+'/data/classificationData.json', (err, data) => {
+        fs.readFile(__dirname + '/data/classificationData.json', (err, data) => {
             if (err) {
                 return console.error(err);
             }
@@ -116,7 +120,7 @@ app.get('/upload/*', (req, res) => {
 app.post('/chinaRailway/login', (req, res) => {
     req.on('data', function (parms) {
         let request = JSON.parse(parms.toString());
-        fs.readFile(__dirname+'/data/userInfo.json', (err, data) => {
+        fs.readFile(__dirname + '/data/userInfo.json', (err, data) => {
             if (err) {
                 return console.error(err);
             }
@@ -124,10 +128,31 @@ app.post('/chinaRailway/login', (req, res) => {
             let result = data.data.find(item => {
                 return item.account === request.account && item.password === request.password;
             });
-            res.send({
-                data:result && result.id,
-                message: result && result.id ? "登录成功" : "用户名或密码错误"
-            })
+            if(result && result.id){
+                req.session.isLogin = true;
+                res.send({
+                    data:result.id,
+                    message:"登录成功"
+                })
+            }else{
+                res.send({
+                    data:false,
+                    message: "用户名或密码错误"
+                })
+            }
+
+        })
+    });
+});
+// 退出登录
+app.post('/chinaRailway/loginOut', (req, res) => {
+    req.on('data', function () {
+        req.session.isLogin = false;
+        res.status(401);
+        res.send({
+            flag:0,
+            data:0,
+            message:"退出成功"
         })
     });
 });
@@ -135,7 +160,7 @@ app.post('/chinaRailway/login', (req, res) => {
 
 // 修改项目名称，新增、删除、修改分类
 writeFileClass = (str, res) => {
-    fs.writeFile(__dirname+'/data/classificationData.json', str, function (err) {
+    fs.writeFile(__dirname + '/data/classificationData.json', str, function (err) {
         if (err) {
             console.error(err);
             res.send({
@@ -149,18 +174,12 @@ writeFileClass = (str, res) => {
         });
     })
 };
-app.use(session({
-    secret: 'somesecrettoken',
-    cookie: { maxAge: 1*60*1000 }  // 1分钟
-}));
 
 app.all('*', (req, res) => {
-    console.log(req.originalUrl);
     res.setHeader('content-type', 'text/html;charset=utf-8');
     if (req.session.isVisit) {
         res.send({flag: 0, "message": "请求的路径不存在0"});
     } else {
-        req.session.isVisit = true;
         res.send({flag: 0, "message": "请求的路径不存在"});
     }
 });

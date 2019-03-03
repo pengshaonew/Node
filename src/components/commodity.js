@@ -16,7 +16,7 @@ commodity.post('/mobile/commodityList', (req, res) => {
             }
             data = JSON.parse(data.toString());
             let dataList = data.data;
-            dataList=dataList.filter(item=>item.createDate===request.createDate);
+            dataList = dataList.filter(item => item.createDate === request.createDate);
             res.send(dataList);
         })
     });
@@ -32,26 +32,41 @@ commodity.post('/commodityList', (req, res) => {
             }
             data = JSON.parse(data.toString());
             let dataList = [...data.data];
-            let total=data.data.length;
-            let {pageNum,pageSize,classId}=request;
-            if(request.classId){
-                dataList=dataList.filter(item=>item.parentId===classId);
-                total=dataList.length;
+            let total = data.data.length;
+            let {pageNum, pageSize, classId} = request;
+            if (request.classId) {
+                dataList = dataList.filter(item => item.parentId === classId);
+                total = dataList.length;
             }
-            dataList=dataList.splice(pageSize*((pageNum||1)-1),pageSize);
+            dataList = dataList.splice(pageSize * ((pageNum || 1) - 1), pageSize);
             res.send({
                 pageNum,
                 pageSize,
                 total,
-                list:dataList
+                list: dataList
             });
         })
     });
 });
 
+isLogin = (req, res) => {
+    if (req.session.isLogin) {
+        return true;
+    } else {
+        res.status(401);
+        res.send({
+            "flag": 0,
+            "message": "登录失败"
+        });
+        return false;
+    }
+};
 
 //新增构件
 commodity.post('/addCommodity', (req, res) => {
+    if (!isLogin(req, res)) {
+        return;
+    }
     fs.readFile(commodityDataPath, (err, data) => {
         if (err) {
             return console.error(err);
@@ -75,7 +90,10 @@ commodity.post('/addCommodity', (req, res) => {
 
 //删除商品
 commodity.post('/deleteCommodity', (req, res) => {
-    fs.readFile('./src/commodityData.json', (err, data) => {
+    if (!isLogin(req, res)) {
+        return;
+    }
+    fs.readFile(commodityDataPath, (err, data) => {
         if (err) {
             return console.error(err);
         }
@@ -89,7 +107,7 @@ commodity.post('/deleteCommodity', (req, res) => {
             writeFileCommodity1(str, res);
         });
     });
-    fs.readFile('./src/data/commodityDataRecord.json', (err, data) => {
+    fs.readFile(commodityDataRecordPath, (err, data) => {
         if (err) {
             return console.error(err);
         }
@@ -107,7 +125,10 @@ commodity.post('/deleteCommodity', (req, res) => {
 
 //修改商品信息
 commodity.post('/updateCommodity', (req, res) => {
-    fs.readFile(commodityDataPath, (err, data) => {
+    if (!isLogin(req, res)) {
+        return;
+    }
+    fs.readFile(commodityDataRecordPath, (err, data) => {
         if (err) {
             return console.error(err);
         }
@@ -117,13 +138,14 @@ commodity.post('/updateCommodity', (req, res) => {
             let dataList = data.data;
             dataList = dataList.map(item => {
                 if (item.id === request.id) {
-                    item=request;
+                    item = request;
                 }
                 return item;
             });
             data.data = dataList;
             let str = JSON.stringify(data);
             writeFileCommodity1(str, res);
+            writeFileCommodity2(request,true);
         });
     })
 });
@@ -138,7 +160,7 @@ commodity.post('/checkCommodityName', (req, res) => {
             let request = JSON.parse(parms.toString());
             data = JSON.parse(data.toString());
             let dataList = data.data;
-            let flag = !dataList.some(item =>item.id!==request.id && item.parentId===request.parentId && item.name===request.name);
+            let flag = !dataList.some(item => item.id !== request.id && item.parentId === request.parentId && item.name === request.name);
             data.data = dataList;
             res.send({
                 "flag": 1,
@@ -161,13 +183,31 @@ writeFileCommodity1 = (str, res) => {
     })
 };
 
-writeFileCommodity2 = (str) => {
-    fs.writeFile(commodityDataRecordPath, str, function (err) {
-        if (err) {
-            console.error(err);
-        }
-        console.log('记录成功');
-    })
+writeFileCommodity2 = (str,flag) => {
+    if(flag){
+        let request = str;
+        fs.readFile(commodityDataRecordPath, (err, data) => {
+            if (err) {
+                return console.error(err);
+            }
+            data = JSON.parse(data.toString());
+            let dataList = data.data;
+            let count = data.count + 1;
+            request.id = count;
+            dataList.push(request);
+            data.count = count;
+            data.data = dataList;
+            let str = JSON.stringify(data);
+            writeFileCommodity2(str);
+        })
+    }else{
+        fs.writeFile(commodityDataRecordPath, str, function (err) {
+            if (err) {
+                console.error(err);
+            }
+            console.log('记录成功');
+        })
+    }
 };
 
 module.exports = commodity;
