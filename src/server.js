@@ -37,8 +37,24 @@ app.use((req, res, next) => {
 let commodity = require('./components/commodity');
 app.use('/chinaRailway/commodity', commodity);
 
+isLogin = (req, res) => {
+    if (req.session.isLogin) {
+        return true;
+    } else {
+        res.status(401);
+        res.send({
+            "flag": 0,
+            "message": "登录失败"
+        });
+        return false;
+    }
+};
+
 //查询分类名称 项目名称
 app.post('/chinaRailway/class/classList', (req, res) => {
+    if (!isLogin(req, res)) {
+        return;
+    }
     fs.readFile(__dirname + '/data/classificationData.json', (err, data) => {
         if (err) {
             return console.error(err);
@@ -50,6 +66,9 @@ app.post('/chinaRailway/class/classList', (req, res) => {
 
 //分类 修改
 app.post('/chinaRailway/class/updateClass', (req, res) => {
+    if (!isLogin(req, res)) {
+        return;
+    }
     req.on('data', function (parms) {
         let request = JSON.parse(parms.toString());
         fs.readFile(__dirname + '/data/classificationData.json', (err, data) => {
@@ -72,6 +91,9 @@ app.post('/chinaRailway/class/updateClass', (req, res) => {
 
 //分类 删除
 app.post('/chinaRailway/class/deleteClass', (req, res) => {
+    if (!isLogin(req, res)) {
+        return;
+    }
     req.on('data', function (parms) {
         let request = JSON.parse(parms.toString());
         fs.readFile(__dirname + '/data/classificationData.json', (err, data) => {
@@ -89,6 +111,9 @@ app.post('/chinaRailway/class/deleteClass', (req, res) => {
 
 //上传商品图片
 app.post('/chinaRailway/upload/commodityImg', (req, res) => {
+    if (!isLogin(req, res)) {
+        return;
+    }
     var form = new formidable.IncomingForm();
     var targetFile = path.join(__dirname, './upload');
     form.uploadDir = targetFile;

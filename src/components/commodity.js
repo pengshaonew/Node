@@ -6,6 +6,20 @@ let commodity = express.Router();
 
 let commodityDataPath = path.join(__dirname, '../data/commodityData.json');
 let commodityDataRecordPath = path.join(__dirname, '../data/commodityDataRecord.json');
+
+isLogin = (req, res) => {
+    if (req.session.isLogin) {
+        return true;
+    } else {
+        res.status(401);
+        res.send({
+            "flag": 0,
+            "message": "登录失败"
+        });
+        return false;
+    }
+};
+
 // 小程序 查询商品列表
 commodity.post('/mobile/commodityList', (req, res) => {
     req.on('data', function (parms) {
@@ -24,6 +38,9 @@ commodity.post('/mobile/commodityList', (req, res) => {
 
 //查询商品列表
 commodity.post('/commodityList', (req, res) => {
+    if (!isLogin(req, res)) {
+        return;
+    }
     req.on('data', function (parms) {
         let request = JSON.parse(parms.toString());
         fs.readFile(commodityDataPath, (err, data) => {
@@ -49,18 +66,6 @@ commodity.post('/commodityList', (req, res) => {
     });
 });
 
-isLogin = (req, res) => {
-    if (req.session.isLogin) {
-        return true;
-    } else {
-        res.status(401);
-        res.send({
-            "flag": 0,
-            "message": "登录失败"
-        });
-        return false;
-    }
-};
 
 //新增构件
 commodity.post('/addCommodity', (req, res) => {
@@ -152,6 +157,9 @@ commodity.post('/updateCommodity', (req, res) => {
 
 //检测商品名称
 commodity.post('/checkCommodityName', (req, res) => {
+    if (!isLogin(req, res)) {
+        return;
+    }
     fs.readFile(commodityDataPath, (err, data) => {
         if (err) {
             return console.error(err);
