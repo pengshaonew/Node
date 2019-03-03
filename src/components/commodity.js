@@ -16,7 +16,7 @@ commodity.post('/mobile/commodityList', (req, res) => {
             }
             data = JSON.parse(data.toString());
             let dataList = data.data;
-            dataList = dataList.filter(item => item.createDate === request.createDate);
+            dataList = dataList.filter(item => item.createDate === request.createDate && item.parentId == request.classId);
             res.send(dataList);
         })
     });
@@ -192,10 +192,20 @@ writeFileCommodity2 = (str,flag) => {
             }
             data = JSON.parse(data.toString());
             let dataList = data.data;
-            let count = data.count + 1;
-            request.id = count;
-            dataList.push(request);
-            data.count = count;
+            let flag = dataList.some(item => item.id === request.id && item.createDate === request.createDate);
+            if(flag){
+                dataList=dataList.map(item=>{
+                    if(item.id === request.id && item.createDate === request.createDate){
+                        item=request;
+                    }
+                    return item;
+                })
+            }else{
+                let count = data.count + 1;
+                request.id = count;
+                dataList.push(request);
+                data.count = count;
+            }
             data.data = dataList;
             let str = JSON.stringify(data);
             writeFileCommodity2(str);
