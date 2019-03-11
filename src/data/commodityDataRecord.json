@@ -1,10 +1,10 @@
 {
-  "count": 19,
+  "count": 21,
   "data": [
     {
       "parentId": "0",
       "name": "拱脚1-1`",
-      "createDate": "2019-3-3",
+      "createDate": "2019-03-3",
       "parentName": "主纵梁",
       "imgUrl": "",
       "id": 1
@@ -84,7 +84,7 @@
     {
       "parentId": "3",
       "name": "上拱肋1`- 9`",
-      "createDate": "2019-3-3",
+      "createDate": "2019-03-3",
       "parentName": "拱肋",
       "imgUrl": "",
       "id": 11
@@ -104,6 +104,47 @@
       "parentName": "拱肋",
       "imgUrl": "",
       "id": 13
+    },
+    {
+      "parentId": "0",
+      "name": "拱脚1-1`",
+      "size": "构件尺寸",
+      "ZZL1": "ZZL1",
+      "weight": "构件重量",
+      "thickness": "构件板厚",
+      "length": "构件长度",
+      "width": "构件宽度",
+      "height": "构件高度",
+      "blanking": "下料",
+      "steelPlate": "钢板信息",
+      "singleElement": "单元件合格情况",
+      "assemble": "组装",
+      "weldLine": "构件焊缝",
+      "weldingMethod": "焊接方法",
+      "welderInfo": "焊工信息",
+      "testMethod": "焊缝检测方法",
+      "testingPersonnelInfo": "焊缝检测人员信息",
+      "qualification": "焊缝合格情况",
+      "idNum": "姓名证件号",
+      "paintingSituation": "涂装情况",
+      "coatingPersonnel": "涂装人员信息",
+      "qmhdjc": "漆膜厚度检测",
+      "dzm": "底中面",
+      "zhikong": "制孔",
+      "zksb": "制孔设备",
+      "zkryxx": "制孔人员信息",
+      "createDate": "2019-03-11",
+      "parentName": "主纵梁",
+      "imgUrl": "http://60.205.186.254/upload/1552307638126.jpg",
+      "id": 20
+    },
+    {
+      "parentId": "0",
+      "name": "拱脚2-2`",
+      "createDate": "2019-03-11",
+      "parentName": "主纵梁",
+      "imgUrl": "",
+      "id": 21
     }
   ]
 }
