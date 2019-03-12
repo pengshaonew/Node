@@ -133,7 +133,7 @@ commodity.post('/updateCommodity', (req, res) => {
     if (!isLogin(req, res)) {
         return;
     }
-    fs.readFile(commodityDataRecordPath, (err, data) => {
+    fs.readFile(commodityDataPath, (err, data) => {
         if (err) {
             return console.error(err);
         }
@@ -179,9 +179,6 @@ commodity.post('/checkCommodityName', (req, res) => {
 });
 //查询商品详情
 commodity.post('/mobile/queryCommodityDetail', (req, res) => {
-    if (!isLogin(req, res)) {
-        return;
-    }
     fs.readFile(commodityDataRecordPath, (err, data) => {
         if (err) {
             return console.error(err);
@@ -237,7 +234,12 @@ writeFileCommodity2 = (str,flag) => {
             }
             data.data = dataList;
             let str = JSON.stringify(data);
-            writeFileCommodity2(str);
+            fs.writeFile(commodityDataRecordPath, str, function (err) {
+                if (err) {
+                    console.error(err);
+                }
+                console.log('记录成功');
+            })
         })
     }else{
         fs.writeFile(commodityDataRecordPath, str, function (err) {

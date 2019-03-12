@@ -64,6 +64,17 @@ app.post('/chinaRailway/class/classList', (req, res) => {
     })
 });
 
+//小程序查询分类名称 项目名称
+app.post('/chinaRailway/mobile/class/classList', (req, res) => {
+    fs.readFile(__dirname + '/data/classificationData.json', (err, data) => {
+        if (err) {
+            return console.error(err);
+        }
+        data = JSON.parse(data.toString());
+        res.send(data);
+    })
+});
+
 //分类 修改
 app.post('/chinaRailway/class/updateClass', (req, res) => {
     if (!isLogin(req, res)) {
