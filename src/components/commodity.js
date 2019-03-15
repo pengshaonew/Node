@@ -196,6 +196,25 @@ commodity.post('/mobile/queryCommodityDetail', (req, res) => {
     })
 });
 
+//查询商品详情2
+commodity.post('/mobile/queryCommodityDetail2', (req, res) => {
+    fs.readFile(commodityDataPath, (err, data) => {
+        if (err) {
+            return console.error(err);
+        }
+        req.on('data', function (parms) {
+            let request = JSON.parse(parms.toString());
+            data = JSON.parse(data.toString());
+            let dataList = data.data;
+            let curData = dataList.find(item => item.id == request.id);
+            res.send({
+                flag: 1,
+                data: curData
+            });
+        });
+    })
+});
+
 
 writeFileCommodity1 = (str, res) => {
     fs.writeFile(commodityDataPath, str, function (err) {
